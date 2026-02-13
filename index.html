@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ENPLASE 🌱 · Plante · Arrose · Récolte</title>
     <link rel="stylesheet" href="style.css">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2d5016">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ENPLASE">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head>
 <body>
 
@@ -665,7 +673,15 @@
     <footer id="app-footer">
         <p>ENPLASE v0.01 — Leroy Aurélien<br>© Tous Droits Réservés 2026</p>
     </footer>
-
+    
+    <!-- Service Worker -->
+        <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('SW enregistré:', reg.scope))
+                .catch(err => console.error('SW erreur:', err));
+        }
+    </script>
 
     <script src="db.js"></script>
     <script src="app.js"></script>

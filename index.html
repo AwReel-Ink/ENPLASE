@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENPLASE 🌱 · Plante · Arrose · Récolte</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ======== BARRE DE NAVIGATION ======== -->
+    <nav id="main-nav">
+        <button class="nav-btn active" data-menu="plantes">🌱 Plantes</button>
+        <button class="nav-btn" data-menu="semis">🌾 Semis</button>
+        <button class="nav-btn" data-menu="astuces">📋 Astuces</button>
+    </nav>
+
+    <!-- ======== CONTENEUR PRINCIPAL ======== -->
+    <main id="app-container">
+
+        <!-- ===================== -->
+        <!-- MENU 1 : LES PLANTES -->
+        <!-- ===================== -->
+        <section id="menu-plantes" class="menu-section active">
+
+            <!-- Liste des pots/bacs -->
+            <div id="plantes-liste-view" class="view active">
+                <div class="view-header">
+                    <h1>Mes Pots & Bacs</h1>
+                    <button id="btn-add-pot" class="btn-add" title="Ajouter un pot/bac">+</button>
+                </div>
+                <div id="pots-list" class="items-list">
+                    <!-- Rempli dynamiquement -->
+                </div>
+            </div>
+
+            <!-- Création d'un pot/bac -->
+            <div id="plantes-creation-view" class="view">
+                <div class="view-header">
+                    <button class="btn-back" data-back="plantes-liste-view">← Retour</button>
+                    <h1>Nouveau Pot / Bac</h1>
+                </div>
+                <form id="form-creation-pot" class="form-card">
+                    <div class="form-group">
+                        <label for="pot-nom">Nom du pot/bac <span class="required">*</span></label>
+                        <input type="text" id="pot-nom" required placeholder="Ex: Bac balcon sud">
+                    </div>
+                    <div class="form-group">
+                        <label for="pot-lieu">Lieu</label>
+                        <input type="text" id="pot-lieu" placeholder="Ex: Balcon, Jardin, Cuisine...">
+                    </div>
+                    <div class="form-group">
+                        <label for="pot-litrage">Litrage</label>
+                        <input type="text" id="pot-litrage" placeholder="Ex: 15L">
+                    </div>
+                    <div class="form-group">
+                        <label for="pot-exposition">Exposition</label>
+                        <select id="pot-exposition">
+                            <option value="">-- Choisir --</option>
+                            <option value="Soleil">Soleil</option>
+                            <option value="Mi-ombre">Mi-ombre</option>
+                            <option value="Ombre">Ombre</option>
+                            <option value="Intérieur">Intérieur</option>
+                            <option value="Intérieur lumière artificielle">Intérieur avec lumière artificielle</option>
+                        </select>
+                    </div>
+
+                    <div class="form-section">
+                        <h2>Contenu (Plantes)</h2>
+                        <div id="creation-plantes-container">
+                            <!-- Première plante par défaut -->
+                            <div class="plante-entry" data-index="0">
+                                <div class="plante-entry-fields">
+                                    <input type="text" class="plante-nom" placeholder="Nom de la plante" required>
+                                    <input type="date" class="plante-date" title="Date de plantation">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="btn-add-plante-creation" class="btn-add-small">+ Ajouter une plante</button>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Enregistrer</button>
+                        <button type="button" class="btn-secondary btn-back" data-back="plantes-liste-view">Annuler</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Consultation / Entretien d'un pot/bac -->
+            <div id="plantes-detail-view" class="view">
+                <div class="view-header">
+                    <button class="btn-back" data-back="plantes-liste-view">← Retour</button>
+                    <h1 id="detail-pot-titre"></h1>
+                </div>
+                <div id="detail-pot-content" class="form-card">
+                    <!-- Infos du pot -->
+                    <div id="detail-pot-infos" class="info-section">
+                        <!-- Rempli dynamiquement -->
+                    </div>
+
+                    <!-- État de la terre (PRIORITAIRE) -->
+                    <div class="form-section priority-section">
+                        <h2>🌍 État de la terre</h2>
+                        <p id="detail-dernier-controle-terre"><strong>Dernier contrôle :</strong> Aucun</p>
+                        <select id="detail-terre" class="select-field">
+                            <option value="">-- Non vérifié --</option>
+                            <option value="Très sèche">Très sèche</option>
+                            <option value="Sèche">Sèche</option>
+                            <option value="Fraîche">Fraîche</option>
+                            <option value="Humide">Humide</option>
+                            <option value="Très humide">Très humide</option>
+                        </select>
+                    </div>
+
+                    <!-- Arrosage -->
+                    <div class="form-section">
+                        <h2>💧 Arrosage</h2>
+                        <div class="info-line" id="detail-dernier-arrosage"></div>
+                        <div class="info-line" id="detail-prochain-arrosage"></div>
+                        <div class="form-group">
+                            <label for="detail-arrosage-type">Type d'arrosage</label>
+                            <select id="detail-arrosage-type">
+                                <option value="">-- Pas d'arrosage --</option>
+                                <option value="Brumisé">Brumisé (très léger)</option>
+                                <option value="Humidifié">Humidifié (léger)</option>
+                                <option value="Arrosé">Arrosé (normal)</option>
+                                <option value="Inondé">Inondé (beaucoup)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="detail-arrosage-quantite">Quantité (facultatif)</label>
+                            <input type="text" id="detail-arrosage-quantite" placeholder="Ex: 150ml, 1L...">
+                        </div>
+                    </div>
+
+                    <!-- Engrais -->
+                    <div class="form-section">
+                        <h2>🧪 Engrais</h2>
+                        <div class="info-line" id="detail-dernier-engrais"></div>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="detail-engrais-ajout">
+                                Ajout d'engrais aujourd'hui
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Serre -->
+                    <div class="form-section">
+                        <h2>🏠 Maintien en serre</h2>
+                        <div class="info-line" id="detail-serre-info"></div>
+                        <div class="form-group">
+                            <label for="detail-serre">En serre ?</label>
+                            <select id="detail-serre">
+                                <option value="">-- Ne pas modifier --</option>
+                                <option value="Oui">Oui</option>
+                                <option value="Non">Non</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- État des plantes -->
+                    <div class="form-section">
+                        <h2>🌿 État des plantes</h2>
+                        <div id="detail-plantes-etat">
+                            <!-- Rempli dynamiquement : une ligne par plante -->
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="btn-enregistrer-entretien" class="btn-primary">Enregistrer</button>
+                        <button type="button" id="btn-modifier-pot" class="btn-secondary">Modifier</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modification d'un pot/bac -->
+            <div id="plantes-modifier-view" class="view">
+                <div class="view-header">
+                    <button class="btn-back" data-back="plantes-detail-view">← Retour</button>
+                    <h1>Modifier le Pot / Bac</h1>
+                </div>
+                <form id="form-modifier-pot" class="form-card">
+                    <input type="hidden" id="modifier-pot-id">
+                    <div class="form-group">
+                        <label for="modifier-pot-nom">Nom du pot/bac <span class="required">*</span></label>
+                        <input type="text" id="modifier-pot-nom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modifier-pot-lieu">Lieu</label>
+                        <input type="text" id="modifier-pot-lieu">
+                    </div>
+                    <div class="form-group">
+                        <label for="modifier-pot-litrage">Litrage</label>
+                        <input type="text" id="modifier-pot-litrage">
+                    </div>
+                    <div class="form-group">
+                        <label for="modifier-pot-exposition">Exposition</label>
+                        <select id="modifier-pot-exposition">
+                            <option value="">-- Choisir --</option>
+                            <option value="Soleil">Soleil</option>
+                            <option value="Mi-ombre">Mi-ombre</option>
+                            <option value="Ombre">Ombre</option>
+                            <option value="Intérieur">Intérieur</option>
+                            <option value="Intérieur lumière artificielle">Intérieur avec lumière artificielle</option>
+                        </select>
+                    </div>
+
+                    <div class="form-section">
+                        <h2>Contenu (Plantes)</h2>
+                        <div id="modifier-plantes-container">
+                            <!-- Rempli dynamiquement -->
+                        </div>
+                        <button type="button" id="btn-add-plante-modifier" class="btn-add-small">+ Ajouter une plante</button>
+                    </div>
+
+                    <div class="form-section danger-section">
+                        <h2>⚠️ Actions</h2>
+                        <button type="button" id="btn-reset-historique-pot" class="btn-warning">Remettre à zéro l'historique</button>
+                        <button type="button" id="btn-supprimer-pot" class="btn-danger">Supprimer ce pot/bac</button>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Enregistrer les modifications</button>
+                        <button type="button" class="btn-secondary btn-back" data-back="plantes-detail-view">Annuler</button>
+                    </div>
+                </form>
+            </div>
+
+        </section>
+
+        <!-- ================== -->
+        <!-- MENU 2 : LES SEMIS -->
+        <!-- ================== -->
+        <section id="menu-semis" class="menu-section">
+
+            <!-- Liste des bacs de semis -->
+            <div id="semis-liste-view" class="view active">
+                <div class="view-header">
+                    <h1>Mes Bacs de Semis</h1>
+                    <button id="btn-add-semis" class="btn-add" title="Ajouter un bac de semis">+</button>
+                </div>
+                <div id="semis-list" class="items-list">
+                    <!-- Rempli dynamiquement -->
+                </div>
+            </div>
+
+            <!-- Création d'un bac de semis -->
+            <div id="semis-creation-view" class="view">
+                <div class="view-header">
+                    <button class="btn-back" data-back="semis-liste-view">← Retour</button>
+                    <h1>Nouveau Bac de Semis</h1>
+                </div>
+                <form id="form-creation-semis" class="form-card">
+                    <div class="form-group">
+                        <label for="semis-nom">Nom du bac <span class="required">*</span></label>
+                        <input type="text" id="semis-nom" required placeholder="Ex: Tomates mars 2026">
+                    </div>
+                    <div class="form-group">
+                        <label for="semis-lieu">Lieu</label>
+                        <input type="text" id="semis-lieu" placeholder="Ex: Rebord fenêtre, Serre...">
+                    </div>
+                    <div class="form-group">
+                        <label for="semis-exposition">Exposition</label>
+                        <select id="semis-exposition">
+                            <option value="">-- Choisir --</option>
+                            <option value="Soleil">Soleil</option>
+                            <option value="Mi-ombre">Mi-ombre</option>
+                            <option value="Ombre">Ombre</option>
+                            <option value="Intérieur">Intérieur</option>
+                            <option value="Intérieur lumière artificielle">Intérieur avec lumière artificielle</option>
+                        </select>
+                    </div>
+
+                    <div class="form-section">
+                    <h2>Configuration de la grille</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="semis-lignes">Nombre de lignes <span class="required">*</span></label>
+                            <input type="number" id="semis-lignes" min="1" max="15" value="4" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="semis-colonnes">Nombre de colonnes <span class="required">*</span></label>
+                            <input type="number" id="semis-colonnes" min="1" max="15" value="6" required>
+                        </div>
+                    </div>
+                    <button type="button" id="btn-generer-grille" class="btn-secondary">Générer l'aperçu</button>
+                </div>
+
+                <!-- Aperçu grille (apparaît après clic sur Générer) -->
+                <div id="creation-grille-section" class="form-section hidden">
+                    <h2>Aperçu du bac</h2>
+                    <div class="semis-grille-wrapper">
+                        <div id="creation-grille" class="semis-grid-display"></div>
+                        <div class="semis-reperes">
+                            <span class="repere-g">G</span>
+                            <span class="repere-d">D</span>
+                        </div>
+                    </div>
+                    <div class="semis-legend">
+                        <span class="legend-item"><span class="legend-color" style="background:#a8b8c0"></span> En attente</span>
+                        <span class="legend-item"><span class="legend-color" style="background:#4caf50"></span> A levé</span>
+                        <span class="legend-item"><span class="legend-color" style="background:#9575CD"></span> Été Replantée</span>
+                        <span class="legend-item"><span class="legend-color" style="background:#2d2d2d"></span> Morte</span>
+                    </div>
+                </div>
+
+                <!-- Nommer les positions (apparaît après génération) -->
+                <div id="creation-noms-section" class="form-section hidden">
+                    <h2>Nommer les positions (facultatif)</h2>
+                    <div id="creation-noms-liste" class="grid-names-list"></div>
+                </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Créer le bac</button>
+                        <button type="button" class="btn-secondary btn-back" data-back="semis-liste-view">Annuler</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Consultation / Entretien d'un bac de semis -->
+            <div id="semis-detail-view" class="view">
+                <div class="view-header">
+                    <button class="btn-back" data-back="semis-liste-view">← Retour</button>
+                    <h1 id="detail-semis-titre"></h1>
+                </div>
+                <div id="detail-semis-content" class="form-card">
+                    <div id="detail-semis-infos" class="info-section"></div>
+
+                    <!-- État de la terre -->
+                    <div class="form-section priority-section">
+                        <h2>🌍 État de la terre</h2>
+                        <p id="detail-semis-dernier-controle-terre"><strong>Dernier contrôle :</strong> Aucun</p>
+                        <select id="detail-semis-terre">
+                            <option value="">-- Non vérifié --</option>
+                            <option value="Très sèche">Très sèche</option>
+                            <option value="Sèche">Sèche</option>
+                            <option value="Fraîche">Fraîche</option>
+                            <option value="Humide">Humide</option>
+                            <option value="Très humide">Très humide</option>
+                        </select>
+                    </div>
+
+                    <!-- Arrosage -->
+                    <div class="form-section">
+                        <h2>💧 Arrosage</h2>
+                        <div class="info-line" id="detail-semis-dernier-arrosage"></div>
+                        <div class="info-line" id="detail-semis-prochain-arrosage"></div>
+                        <div class="form-group">
+                            <label for="detail-semis-arrosage-type">Type d'arrosage</label>
+                            <select id="detail-semis-arrosage-type">
+                                <option value="">-- Pas d'arrosage --</option>
+                                <option value="Brumisé">Brumisé (très léger)</option>
+                                <option value="Humidifié">Humidifié (léger)</option>
+                                <option value="Arrosé">Arrosé (normal)</option>
+                                <option value="Inondé">Inondé (beaucoup)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="detail-semis-arrosage-quantite">Quantité (facultatif)</label>
+                            <input type="text" id="detail-semis-arrosage-quantite" placeholder="Ex: 50ml...">
+                        </div>
+                    </div>
+
+                    <!-- Engrais -->
+                    <div class="form-section">
+                        <h2>🧪 Engrais</h2>
+                        <div class="info-line" id="detail-semis-dernier-engrais"></div>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="detail-semis-engrais-ajout">
+                                Ajout d'engrais aujourd'hui
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Serre -->
+                    <div class="form-section">
+                        <h2>🏠 Maintien en serre</h2>
+                        <div class="info-line" id="detail-semis-serre-info"></div>
+                        <div class="form-group">
+                            <label for="detail-semis-serre">En serre ?</label>
+                            <select id="detail-semis-serre">
+                                <option value="">-- Ne pas modifier --</option>
+                                <option value="Oui">Oui</option>
+                                <option value="Non">Non</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Grille de semis -->
+                    <div class="form-section">
+                        <h2>🌱 Grille des semis</h2>
+                        <div class="semis-legend">
+                            <span class="legend-item"><span class="legend-color" style="background:#a8b8c0"></span> En attente</span>
+                            <span class="legend-item"><span class="legend-color" style="background:#4caf50"></span> A levé</span>
+                            <span class="legend-item"><span class="legend-color" style="background:#9575CD"></span> Été Replantée</span>
+                            <span class="legend-item"><span class="legend-color" style="background:#2d2d2d"></span> Morte</span>
+                        </div>
+                        <div class="semis-grille-wrapper">
+                            <div id="detail-semis-grid" class="semis-grid-display"></div>
+                            <div class="semis-reperes">
+                                <span class="repere-g">G</span>
+                                <span class="repere-d">D</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="btn-enregistrer-semis" class="btn-primary">Enregistrer</button>
+                        <button type="button" id="btn-modifier-semis" class="btn-secondary">Modifier</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modification d'un bac de semis -->
+            <div id="semis-modifier-view" class="view">
+                <div class="view-header">
+                    <button class="btn-back" data-back="semis-detail-view">← Retour</button>
+                    <h1>Modifier le Bac de Semis</h1>
+                </div>
+                <form id="form-modifier-semis" class="form-card">
+                    <input type="hidden" id="modifier-semis-id">
+                    <div class="form-group">
+                        <label for="modifier-semis-nom">Nom du bac <span class="required">*</span></label>
+                        <input type="text" id="modifier-semis-nom" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modifier-semis-lieu">Lieu</label>
+                        <input type="text" id="modifier-semis-lieu">
+                    </div>
+                    <div class="form-group">
+                        <label for="modifier-semis-exposition">Exposition</label>
+                        <select id="modifier-semis-exposition">
+                            <option value="">-- Choisir --</option>
+                            <option value="Soleil">Soleil</option>
+                            <option value="Mi-ombre">Mi-ombre</option>
+                            <option value="Ombre">Ombre</option>
+                            <option value="Intérieur">Intérieur</option>
+                            <option value="Intérieur lumière artificielle">Intérieur avec lumière artificielle</option>
+                        </select>
+                    </div>
+
+                                        <div class="form-section">
+                        <h2>Dimensions de la grille</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="modifier-semis-lignes">Lignes</label>
+                                <input type="number" id="modifier-semis-lignes" min="1" max="25">
+                            </div>
+                            <div class="form-group">
+                                <label for="modifier-semis-colonnes">Colonnes</label>
+                                <input type="number" id="modifier-semis-colonnes" min="1" max="25">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h2>Grille — Nommer les positions</h2>
+                        <div id="modifier-semis-noms" class="grid-names-list">
+                            <!-- Rempli dynamiquement -->
+                        </div>
+                    </div>
+
+                    <div class="form-section danger-section">
+                        <h2>⚠️ Actions</h2>
+                        <button type="button" id="btn-reset-historique-semis" class="btn-warning">Remettre à zéro l'historique</button>
+                        <button type="button" id="btn-supprimer-semis" class="btn-danger">Supprimer ce bac de semis</button>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Enregistrer les modifications</button>
+                        <button type="button" class="btn-secondary btn-back" data-back="semis-detail-view">Annuler</button>
+                    </div>
+                </form>
+            </div>
+
+        </section>
+
+        <!-- ================================ -->
+        <!-- MENU 3 : ASTUCES & INFORMATIONS -->
+        <!-- ================================ -->
+        <section id="menu-astuces" class="menu-section">
+
+            <!-- Sous-navigation -->
+            <div class="sub-nav">
+                <button class="sub-nav-btn active" data-subtab="infos">Astuces & Informations</button>
+                <button class="sub-nav-btn" data-subtab="ajout-conseil">Ajouter Conseils</button>
+            </div>
+
+            <!-- Onglet Astuces & Informations -->
+            <div id="subtab-infos" class="subtab active">
+                <div class="form-card">
+                    <h2>🌿 Guide des états des plantes</h2>
+
+                    <div class="astuce-card etat-sain">
+                        <h3>🟢 Sain</h3>
+                        <p><strong>Actions :</strong> Entretien courant, rappel d'arrosage/fertilisation, pas d'intervention particulière.</p>
+                    </div>
+                    <div class="astuce-card etat-croissance">
+                        <h3>🟩 En croissance</h3>
+                        <p><strong>Actions :</strong> Fertilisation légère, tuteurage si besoin, surveillance.</p>
+                    </div>
+                    <div class="astuce-card etat-repos">
+                        <h3>💤 Au repos</h3>
+                        <p><strong>Actions :</strong> Réduire eau & engrais, protection climatique si nécessaire.</p>
+                    </div>
+                    <div class="astuce-card etat-reprise">
+                        <h3>🔄 En reprise</h3>
+                        <p><strong>Actions :</strong> Surveillance rapprochée, arrosage/engrais modéré, éviter stress supplémentaires (pas de rempotage ni fertilisation forte).</p>
+                    </div>
+                    <div class="astuce-card etat-stresse">
+                        <h3>⚠️ Stressé</h3>
+                        <p><strong>Actions :</strong> Diagnostiquer la cause (manque/excès d'eau, choc, gel, brûlure), actions correctives immédiates (arroser/drainer, ombrer, rempoter).</p>
+                    </div>
+                    <div class="astuce-card etat-parasite">
+                        <h3>🐛 Parasité</h3>
+                        <p><strong>Actions :</strong> Isolation, contrôle mécanique/biologique, traitement ciblé.</p>
+                    </div>
+                    <div class="astuce-card etat-malade">
+                        <h3>🤒 Malade</h3>
+                        <p><strong>Actions :</strong> Isolement, suppression des parties atteintes, traitement adapté, analyser propagation.</p>
+                    </div>
+                    <div class="astuce-card etat-mort">
+                        <h3>💀 Mort</h3>
+                        <p><strong>Actions :</strong> Retrait, compostage si sûr, analyser causes si récurrent.</p>
+                    </div>
+
+                    <hr class="separator">
+
+                    <!-- Import / Export -->
+                    <h2>💾 Sauvegarde</h2>
+                    <div class="backup-section">
+                        <button id="btn-export" class="btn-primary">📤 Exporter la sauvegarde (.json)</button>
+                        <div class="import-group">
+                            <label for="import-file" class="btn-secondary btn-import-label">📥 Importer une sauvegarde (.json)</label>
+                            <input type="file" id="import-file" accept=".json" hidden>
+                        </div>
+                    </div>
+
+                    <hr class="separator">
+
+                    <!-- Informations -->
+                    <h2>ℹ️ Informations</h2>
+                    <div class="app-info">
+                        <p><strong>Application :</strong> ENPLASE</p>
+                        <p><strong>« Plante 🌱 · Arrose 💧 · Récolte 🧺 »</strong></p>
+                        <p><strong>Créateur :</strong> Leroy Aurélien</p>
+                        <p><strong>Version :</strong> 1.01</p>
+                        <p><strong>©</strong> Tous Droits Réservés 2026</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onglet Ajouter Conseils -->
+<div id="subtab-ajout-conseil" class="subtab">
+
+    <!-- Vue liste des conseils -->
+    <div id="conseil-liste-view" class="conseil-view active">
+        <div class="view-header">
+            <h1>Mes Conseils</h1>
+            <button id="btn-add-conseil" class="btn-add" title="Ajouter un conseil">+</button>
+        </div>
+        <div id="conseils-list" class="conseil-list">
+            <!-- Rempli dynamiquement -->
+        </div>
+    </div>
+
+    <!-- Vue détail d'un conseil -->
+    <div id="conseil-detail-view" class="conseil-view">
+        <div class="view-header">
+            <button class="btn-back-conseil" data-backview="liste">← Retour</button>
+            <h1>Détail du Conseil</h1>
+        </div>
+        <div id="conseil-detail-content" class="form-card">
+            <h2 id="detail-conseil-titre"></h2>
+            <div id="detail-conseil-texte" class="detail-texte"></div>
+            <div id="detail-conseil-lien" class="detail-lien"></div>
+            <div id="detail-conseil-source" class="detail-source"></div>
+        </div>
+    </div>
+
+    <!-- Vue création d'un conseil -->
+    <div id="conseil-creation-view" class="conseil-view">
+        <div class="view-header">
+            <button class="btn-back-conseil" data-backview="liste">← Retour</button>
+            <h1>Nouveau Conseil</h1>
+        </div>
+        <form id="form-creation-conseil" class="form-card">
+            <div class="form-group">
+                <label for="conseil-titre">Titre <span class="required">*</span></label>
+                <input type="text" id="conseil-titre" required placeholder="Ex: Arrosage des tomates">
+            </div>
+            <div class="form-group">
+                <label for="conseil-texte">Conseil / Astuce <span class="required">*</span></label>
+                <textarea id="conseil-texte" rows="6" required placeholder="Rédigez votre conseil ici..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="conseil-lien">Lien internet (facultatif)</label>
+                <input type="url" id="conseil-lien" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label for="conseil-source">Source (facultatif)</label>
+                <input type="text" id="conseil-source" placeholder="Ex: Livre, site web, expérience...">
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Enregistrer</button>
+                <button type="button" class="btn-secondary btn-back-conseil" data-backview="liste">Annuler</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Vue édition conseil -->
+    <div id="conseil-edition-view" class="conseil-view">
+        <div class="view-header">
+            <button class="btn-back-conseil" data-backview="liste">← Retour</button>
+            <h1>Modifier le Conseil</h1>
+        </div>
+        <form id="form-edition-conseil" class="form-card">
+            <input type="hidden" id="edit-conseil-id">
+            <div class="form-group">
+                <label for="edit-conseil-titre">Titre <span class="required">*</span></label>
+                <input type="text" id="edit-conseil-titre" required placeholder="Ex: Arrosage des tomates">
+            </div>
+            <div class="form-group">
+                <label for="edit-conseil-texte">Conseil / Astuce <span class="required">*</span></label>
+                <textarea id="edit-conseil-texte" rows="6" required placeholder="Rédigez votre conseil ici..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="edit-conseil-lien">Lien internet (facultatif)</label>
+                <input type="url" id="edit-conseil-lien" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label for="edit-conseil-source">Source (facultatif)</label>
+                <input type="text" id="edit-conseil-source" placeholder="Ex: Livre, site web, expérience...">
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Mettre à jour</button>
+                <button type="button" class="btn-secondary btn-back-conseil" data-backview="liste">Annuler</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+        </section>
+
+    </main>
+
+        <!-- ======== MODALE DE CONFIRMATION ======== -->
+    <div id="confirm-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <p id="modal-message"></p>
+            <div class="modal-buttons">
+                <button id="modal-confirm" class="btn-primary">Confirmer</button>
+                <button id="modal-cancel" class="btn-secondary">Annuler</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======== TOAST ======== -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ======== COPYRIGHT ======== -->
+    <footer id="app-footer">
+        <p>ENPLASE v0.01 — Leroy Aurélien<br>© Tous Droits Réservés 2026</p>
+    </footer>
+
+
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

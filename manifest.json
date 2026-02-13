@@ -2,6 +2,8 @@
     "name": "ENPLASE",
     "short_name": "ENPLASE",
     "description": "Gestion de plantes, semis et conseils de jardinage",
+    "scope": "/ENPLASE/",
+    "id": "/ENPLASE/",
     "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#1a1a2e",

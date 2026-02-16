@@ -1,4 +1,4 @@
-const CACHE_NAME = 'enplase-v1.01';
+const CACHE_NAME = 'enplase-v1.03';
 const ASSETS = [
     './',
     './index.html',
@@ -59,3 +59,4 @@ self.addEventListener('fetch', event => {
         })
     );
 });
+

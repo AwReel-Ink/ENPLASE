@@ -114,11 +114,11 @@ function getGrilleFromDOM(semis) {
 
 function initNavigation() {
     // Menu principal
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const menu = btn.dataset.menu;
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+    document.querySelectorAll('.tab-icon').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const menu = tab.dataset.menu;
+            document.querySelectorAll('.tab-icon').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
             document.querySelectorAll('.menu-section').forEach(s => s.classList.remove('active'));
             document.getElementById('menu-' + menu).classList.add('active');
         });

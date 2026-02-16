@@ -17,12 +17,27 @@
 </head>
 <body>
 
-    <!-- ======== BARRE DE NAVIGATION ======== -->
-    <nav id="main-nav">
-        <button class="nav-btn active" data-menu="plantes">🌱 Plantes</button>
-        <button class="nav-btn" data-menu="semis">🌾 Semis</button>
-        <button class="nav-btn" data-menu="astuces">📋 Astuces</button>
-    </nav>
+<!-- ======== BARRE DE NAVIGATION ======== -->
+<nav id="main-nav" class="tab-bar">
+    <button class="tab-icon active" data-menu="plantes">
+        <div class="tab-img-wrapper">
+            <img src="icon-plantes.png" alt="Plantes">
+        </div>
+        <span>Plantes</span>
+    </button>
+    <button class="tab-icon" data-menu="semis">
+        <div class="tab-img-wrapper">
+            <img src="icon-semis.png" alt="Semis">
+        </div>
+        <span>Semis</span>
+    </button>
+    <button class="tab-icon" data-menu="astuces">
+        <div class="tab-img-wrapper">
+            <img src="icon-astuces.png" alt="Astuces">
+        </div>
+        <span>Astuces</span>
+    </button>
+</nav>
 
     <!-- ======== CONTENEUR PRINCIPAL ======== -->
     <main id="app-container">

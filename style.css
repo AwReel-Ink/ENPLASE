@@ -1,5 +1,5 @@
 /* ===========================
-   ENPLASE — Thème Jardinage
+   ENPLASE — Thème Jardinage — V1.05
    =========================== */
 
 :root {
@@ -619,6 +619,46 @@ body {
 .info-line .highlight {
     color: var(--color-primary);
     font-weight: 700;
+}
+
+/* ===== CONTENEUR SCROLL GRILLE ===== */
+.grille-scroll-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 14px;
+    scrollbar-width: auto;
+    scrollbar-color: #8d6e63 #e8e0d4;
+}
+
+.grille-scroll-container .semis-grille-wrapper {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Chrome, Edge, Safari */
+.grille-scroll-container::-webkit-scrollbar {
+    height: 14px;
+}
+
+.grille-scroll-container::-webkit-scrollbar-track {
+    background: #e8e0d4;
+    border-radius: 10px;
+    margin: 0 4px;
+}
+
+.grille-scroll-container::-webkit-scrollbar-thumb {
+    background: #8d6e63;
+    border-radius: 10px;
+    border: 3px solid #e8e0d4;
+    min-width: 60px;
+}
+
+.grille-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #6d4c41;
+}
+
+.grille-scroll-container::-webkit-scrollbar-thumb:active {
+    background: #5d4037;
 }
 
 /* ===== GRILLE SEMIS ===== */
@@ -1294,28 +1334,12 @@ body {
     padding: 16px;
     display: inline-block;
     margin: 10px 0;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
+    flex-shrink: 0;
 }
 
 .semis-grid-display {
     display: grid;
     gap: 6px;
-}
-
-/* Autorise la grille à déborder des conteneurs parents */
-.form-section:has(.semis-grille-wrapper),
-.detail-section:has(.semis-grille-wrapper) {
-    overflow: visible;
-}
-
-.form-card:has(.semis-grille-wrapper) {
-    overflow: visible;
-}
-
-.view:has(.semis-grille-wrapper) {
-    overflow: visible;
 }
 
 .semis-cell {
@@ -1472,4 +1496,168 @@ body::before {
     filter: blur(3px) brightness(0.5) saturate(0.5);        /* ← Règle l'intensité du flou ici */
     z-index: -1;
     transform: scale(1.15);      /* Évite les bords blancs du blur */
+}
+
+/* ===================== TAGS & FILTRES CONSEILS ===================== */
+
+.conseils-filtres {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin: 0 16px 16px 16px;
+    border: 1px solid var(--border-color);
+}
+
+.conseils-filtres h3 {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.tags-filter-group,
+.tags-select-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag-filter-chip,
+.tag-select-chip {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.tag-filter-chip input[type="checkbox"],
+.tag-select-chip input[type="checkbox"] {
+    display: none;
+}
+
+.chip-label {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+/* === Chips non sélectionnés : couleur du tag mais discret === */
+[data-tag-key="potager-semis"] .chip-label {
+    border: 2px solid rgba(61, 111, 46, 0.3);
+    color: rgba(61, 111, 46, 0.5);
+    background: rgba(61, 111, 46, 0.05);
+}
+
+[data-tag-key="arbres-fleurs"] .chip-label {
+    border: 2px solid rgba(253, 202, 234, 0.3);
+    color: rgba(253, 202, 234, 0.5);
+    background: rgba(253, 202, 234, 0.05);
+}
+
+[data-tag-key="entretien-sol"] .chip-label {
+    border: 2px solid rgba(255, 168, 0, 0.3);
+    color: rgba(255, 168, 0, 0.5);
+    background: rgba(255, 168, 0, 0.05);
+}
+
+[data-tag-key="maladies-protection"] .chip-label {
+    border: 2px solid rgba(48, 92, 222, 0.3);
+    color: rgba(48, 92, 222, 0.5);
+    background: rgba(48, 92, 222, 0.05);
+}
+
+[data-tag-key="calendrier-materiel"] .chip-label {
+    border: 2px solid rgba(224, 205, 149, 0.3);
+    color: rgba(224, 205, 149, 0.5);
+    background: rgba(224, 205, 149, 0.05);
+}
+
+/* === Chips sélectionnés : même couleur mais bien opaque === */
+[data-tag-key="potager-semis"] input:checked + .chip-label {
+    border-color: #3D6F2E;
+    color: #3D6F2E;
+    background: rgba(61, 111, 46, 0.25);
+    font-weight: 600;
+}
+
+[data-tag-key="arbres-fleurs"] input:checked + .chip-label {
+    border-color: #FDCAEA;
+    color: #FDCAEA;
+    background: rgba(253, 202, 234, 0.3);
+    font-weight: 600;
+}
+
+[data-tag-key="entretien-sol"] input:checked + .chip-label {
+    border-color: #FFA800;
+    color: #FFA800;
+    background: rgba(255, 168, 0, 0.25);
+    font-weight: 600;
+}
+
+[data-tag-key="maladies-protection"] input:checked + .chip-label {
+    border-color: #305CDE;
+    color: #305CDE;
+    background: rgba(48, 92, 222, 0.25);
+    font-weight: 600;
+}
+
+[data-tag-key="calendrier-materiel"] input:checked + .chip-label {
+    border-color: #E0CD95;
+    color: #E0CD95;
+    background: rgba(224, 205, 149, 0.25);
+    font-weight: 600;
+}
+
+/* ===================== BADGES TAGS SUR CARTES ===================== */
+
+.conseil-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+    margin-bottom: 8px;
+}
+
+.conseil-tag-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: var(--bg-main);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.conseil-tag-badge[data-tag="potager-semis"] {
+    background: rgba(61, 111, 46, 0.25);
+    color: #3D6F2E;
+    border-color: rgba(61, 111, 46, 0.5);
+}
+
+.conseil-tag-badge[data-tag="arbres-fleurs"] {
+    background: rgba(253, 202, 234, 0.3);
+    color: #FDCAEA;
+    border-color: rgba(253, 202, 234, 0.5);
+}
+
+.conseil-tag-badge[data-tag="entretien-sol"] {
+    background: rgba(255, 168, 0, 0.25);
+    color: #FFA800;
+    border-color: rgba(255, 168, 0, 0.5);
+}
+
+.conseil-tag-badge[data-tag="maladies-protection"] {
+    background: rgba(48, 92, 222, 0.25);
+    color: #305CDE;
+    border-color: rgba(48, 92, 222, 0.5);
+}
+
+.conseil-tag-badge[data-tag="calendrier-materiel"] {
+    background: rgba(224, 205, 149, 0.25);
+    color: #E0CD95;
+    border-color: rgba(224, 205, 149, 0.5);
 }

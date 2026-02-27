@@ -1,5 +1,5 @@
 /**
- * ENPLASE v0.01 — Application principale
+ * ENPLASE v1.05 — Application principale
  * Plante 🌱 · Arrose 💧 · Récolte 🧺
  */
 
@@ -1148,78 +1148,73 @@ async function handleModifierSemis(e) {
 // MENU 3 : ASTUCES & INFORMATIONS
 // ==============================
 
-function initAstuces() {
-    // --- Sous-navigation (onglets Astuces / Ajouter Conseils) ---
-    document.querySelectorAll('#menu-astuces .sub-nav-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('#menu-astuces .sub-nav-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const target = btn.dataset.subtab;
-            document.querySelectorAll('#menu-astuces .subtab').forEach(t => t.classList.remove('active'));
-            document.getElementById('subtab-' + target).classList.add('active');
-            // Réafficher la vue liste quand on revient sur l'onglet conseils
-            if (target === 'ajout-conseil') {
-                showConseilView('liste');
-            }
-        });
-    });
+// ===== Tags disponibles =====
+const TAGS_CONSEILS = {
+    'potager-semis': '🥕 Potager & Semis',
+    'arbres-fleurs': '🌳 Arbres & Fleurs',
+    'entretien-sol': '🧹 Entretien & Sol',
+    'maladies-protection': '🛡️ Maladies & Protection',
+    'calendrier-materiel': '📅 Calendrier & Matériel'
+};
 
-    // --- Bouton "+" ajouter conseil ---
-    document.getElementById('btn-add-conseil').addEventListener('click', () => {
-        document.getElementById('form-creation-conseil').reset();
-        showConseilView('creation');
-    });
-
-    // --- Boutons retour dans les vues conseil ---
-    document.querySelectorAll('.btn-back-conseil').forEach(btn => {
-        btn.addEventListener('click', () => {
-            showConseilView('liste');
-        });
-    });
-
-    // --- Formulaire création conseil ---
-    document.getElementById('form-creation-conseil').addEventListener('submit', handleCreationConseil);
-
-    // --- Formulaire édition conseil ---
-    document.getElementById('form-edition-conseil').addEventListener('submit', handleEditionConseil);
-
-    // --- Export ---
-    document.getElementById('btn-export').addEventListener('click', handleExport);
-
-    // --- Import ---
-    document.getElementById('import-file').addEventListener('change', handleImport);
+// ===== Génération badges tags pour affichage =====
+function genererTagsBadges(tags) {
+    if (!tags || tags.length === 0) return '';
+    return '<div class="conseil-tags">' +
+        tags.map(t => `<span class="conseil-tag-badge" data-tag="${t}">${TAGS_CONSEILS[t] || t}</span>`).join('') +
+        '</div>';
 }
 
 // ===== Navigation entre vues conseil =====
-
 function showConseilView(viewName) {
-    // Masquer toutes les vues
     document.querySelectorAll('#subtab-ajout-conseil .conseil-view').forEach(v => {
         v.classList.remove('active');
     });
-    // Afficher la vue demandée
     document.getElementById('conseil-' + viewName + '-view').classList.add('active');
-    // Recharger la liste si on revient dessus
     if (viewName === 'liste') {
         loadConseilsList();
     }
 }
 
-// ===== Liste des conseils (bulles avec aperçu) =====
+// ===== Récupérer les tags filtrés =====
+function getTagsFiltresActifs() {
+    const actifs = [];
+    document.querySelectorAll('.filtre-tag-cb:checked').forEach(cb => {
+        actifs.push(cb.value);
+    });
+    return actifs;
+}
 
+// ===== Liste des conseils avec filtrage =====
 async function loadConseilsList() {
     const conseils = await getAllConseils();
     const container = document.getElementById('conseils-list');
+    const filtresActifs = getTagsFiltresActifs();
 
     if (!conseils || conseils.length === 0) {
         container.innerHTML = '<p class="empty-message">Aucun conseil ajouté pour le moment</p>';
         return;
     }
 
-    container.innerHTML = conseils.map(c => `
+    // Filtrer selon les tags cochés
+    let conseilsFiltres = conseils;
+    if (filtresActifs.length > 0) {
+        conseilsFiltres = conseils.filter(c => {
+            if (!c.tags || c.tags.length === 0) return false;
+            return filtresActifs.every(f => c.tags.includes(f));
+        });
+    }
+
+    if (conseilsFiltres.length === 0) {
+        container.innerHTML = '<p class="empty-message">Aucun conseil ne correspond aux filtres sélectionnés</p>';
+        return;
+    }
+
+    container.innerHTML = conseilsFiltres.map(c => `
         <div class="conseil-bulle" data-id="${c.id}">
             <div class="conseil-bulle-content">
                 <h3 class="conseil-bulle-titre">${escapeHTML(c.titre)}</h3>
+                ${genererTagsBadges(c.tags)}
                 <p class="conseil-bulle-apercu">${escapeHTML(c.texte)}</p>
             </div>
             <div class="conseil-bulle-actions">
@@ -1232,7 +1227,6 @@ async function loadConseilsList() {
     // Clic sur la bulle → vue détail
     container.querySelectorAll('.conseil-bulle').forEach(bulle => {
         bulle.addEventListener('click', (e) => {
-            // Ne pas ouvrir le détail si on clique sur un bouton action
             if (e.target.closest('.conseil-bulle-actions')) return;
             const id = Number(bulle.dataset.id);
             openConseilDetail(id);
@@ -1263,7 +1257,6 @@ async function loadConseilsList() {
 }
 
 // ===== Vue détail d'un conseil =====
-
 async function openConseilDetail(id) {
     const c = await getConseilById(id);
     if (!c) {
@@ -1272,6 +1265,13 @@ async function openConseilDetail(id) {
     }
 
     document.getElementById('detail-conseil-titre').textContent = c.titre;
+
+    // Tags
+    const tagsEl = document.getElementById('detail-conseil-tags');
+    if (tagsEl) {
+        tagsEl.innerHTML = genererTagsBadges(c.tags);
+    }
+
     document.getElementById('detail-conseil-texte').textContent = c.texte;
 
     const lienEl = document.getElementById('detail-conseil-lien');
@@ -1292,7 +1292,6 @@ async function openConseilDetail(id) {
 }
 
 // ===== Édition d'un conseil =====
-
 async function openEditionConseil(id) {
     const conseil = await getConseilById(id);
     if (!conseil) {
@@ -1305,6 +1304,11 @@ async function openEditionConseil(id) {
     document.getElementById('edit-conseil-texte').value = conseil.texte;
     document.getElementById('edit-conseil-lien').value = conseil.lien || '';
     document.getElementById('edit-conseil-source').value = conseil.source || '';
+
+    // Cocher les tags existants
+    document.querySelectorAll('.edition-tag-cb').forEach(cb => {
+        cb.checked = conseil.tags && conseil.tags.includes(cb.value);
+    });
 
     showConseilView('edition');
 }
@@ -1321,6 +1325,17 @@ async function handleEditionConseil(e) {
         return;
     }
 
+    // Récupérer les tags cochés
+    const tags = [];
+    document.querySelectorAll('.edition-tag-cb:checked').forEach(cb => {
+        tags.push(cb.value);
+    });
+
+    if (tags.length === 0) {
+        showToast('Sélectionnez au moins une catégorie');
+        return;
+    }
+
     const existant = await getConseilById(id);
 
     const conseilData = {
@@ -1329,6 +1344,7 @@ async function handleEditionConseil(e) {
         texte: texte,
         lien: document.getElementById('edit-conseil-lien').value.trim() || '',
         source: document.getElementById('edit-conseil-source').value.trim() || '',
+        tags: tags,
         dateCreation: existant ? existant.dateCreation : todayISO()
     };
 
@@ -1338,7 +1354,6 @@ async function handleEditionConseil(e) {
 }
 
 // ===== Création d'un conseil =====
-
 async function handleCreationConseil(e) {
     e.preventDefault();
 
@@ -1350,11 +1365,23 @@ async function handleCreationConseil(e) {
         return;
     }
 
+    // Récupérer les tags cochés
+    const tags = [];
+    document.querySelectorAll('.creation-tag-cb:checked').forEach(cb => {
+        tags.push(cb.value);
+    });
+
+    if (tags.length === 0) {
+        showToast('Sélectionnez au moins une catégorie');
+        return;
+    }
+
     const conseilData = {
         titre: titre,
         texte: texte,
         lien: document.getElementById('conseil-lien').value.trim() || '',
         source: document.getElementById('conseil-source').value.trim() || '',
+        tags: tags,
         dateCreation: todayISO()
     };
 
@@ -1364,12 +1391,55 @@ async function handleCreationConseil(e) {
 }
 
 // ===== Utilitaire échappement HTML =====
-
 function escapeHTML(str) {
     if (!str) return '';
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
+}
+
+// ===== Init Astuces (appelé par DOMContentLoaded) =====
+function initAstuces() {
+    // --- Sous-navigation (onglets Astuces / Ajouter Conseils) ---
+    document.querySelectorAll('#menu-astuces .sub-nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('#menu-astuces .sub-nav-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const target = btn.dataset.subtab;
+            document.querySelectorAll('#menu-astuces .subtab').forEach(t => t.classList.remove('active'));
+            document.getElementById('subtab-' + target).classList.add('active');
+            if (target === 'ajout-conseil') {
+                showConseilView('liste');
+            }
+        });
+    });
+
+    // --- Bouton "+" ajouter conseil ---
+    document.getElementById('btn-add-conseil').addEventListener('click', () => {
+        document.getElementById('form-creation-conseil').reset();
+        document.querySelectorAll('.creation-tag-cb').forEach(cb => cb.checked = false);
+        showConseilView('creation');
+    });
+
+    // --- Boutons retour ---
+    document.querySelectorAll('.btn-back-conseil').forEach(btn => {
+        btn.addEventListener('click', () => {
+            showConseilView('liste');
+        });
+    });
+
+    // --- Formulaires ---
+    document.getElementById('form-creation-conseil').addEventListener('submit', handleCreationConseil);
+    document.getElementById('form-edition-conseil').addEventListener('submit', handleEditionConseil);
+
+    // --- Filtres tags ---
+    document.querySelectorAll('.filtre-tag-cb').forEach(cb => {
+        cb.addEventListener('change', loadConseilsList);
+    });
+
+        // --- Export / Import ---
+    document.getElementById('btn-export').addEventListener('click', handleExport);
+    document.getElementById('import-file').addEventListener('change', handleImport);
 }
 
 // ----- Export / Import -----
@@ -1425,36 +1495,5 @@ async function handleImport(e) {
         }
     });
 
-    e.target.value = '';
-}
-
-async function handleImport(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    showModal('Importer cette sauvegarde ? Toutes les données actuelles seront remplacées.', async () => {
-        try {
-            const text = await file.text();
-            const data = JSON.parse(text);
-
-            if (!data.pots && !data.semis && !data.conseils) {
-                showToast('Fichier invalide');
-                return;
-            }
-
-            await importAllData(data);
-            showToast('Sauvegarde importée ✓');
-
-            // Recharger tout
-            await loadPotsList();
-            await loadSemisList();
-            await loadConseilsList();
-        } catch (err) {
-            console.error('Erreur import :', err);
-            showToast('Erreur lors de l\'import');
-        }
-    });
-
-    // Reset input
     e.target.value = '';
 }

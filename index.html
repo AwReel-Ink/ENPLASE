@@ -314,11 +314,13 @@
                 <!-- Aperçu grille (apparaît après clic sur Générer) -->
                 <div id="creation-grille-section" class="form-section hidden">
                     <h2>Aperçu du bac</h2>
-                    <div class="semis-grille-wrapper">
-                        <div id="creation-grille" class="semis-grid-display"></div>
-                        <div class="semis-reperes">
-                            <span class="repere-g">G</span>
-                            <span class="repere-d">D</span>
+                    <div class="grille-scroll-container">
+                        <div class="semis-grille-wrapper">
+                            <div id="creation-grille" class="semis-grid-display"></div>
+                            <div class="semis-reperes">
+                                <span class="repere-g">G</span>
+                                <span class="repere-d">D</span>
+                            </div>
                         </div>
                     </div>
                     <div class="semis-legend">
@@ -412,29 +414,31 @@
                         </div>
                     </div>
 
-                    <!-- Grille de semis -->
-                    <div class="form-section">
-                        <h2>🌱 Grille des semis</h2>
-                        <div class="semis-legend">
-                            <span class="legend-item"><span class="legend-color" style="background:#a8b8c0"></span> En attente</span>
-                            <span class="legend-item"><span class="legend-color" style="background:#4caf50"></span> A levé</span>
-                            <span class="legend-item"><span class="legend-color" style="background:#9575CD"></span> Été Replantée</span>
-                            <span class="legend-item"><span class="legend-color" style="background:#2d2d2d"></span> Morte</span>
+            <!-- Grille de semis -->
+            <div class="form-section">
+                <h2>🌱 Grille des semis</h2>
+                <div class="semis-legend">
+                    <span class="legend-item"><span class="legend-color" style="background:#a8b8c0"></span> En attente</span>
+                    <span class="legend-item"><span class="legend-color" style="background:#4caf50"></span> A levé</span>
+                    <span class="legend-item"><span class="legend-color" style="background:#9575CD"></span> Été Replantée</span>
+                    <span class="legend-item"><span class="legend-color" style="background:#2d2d2d"></span> Morte</span>
+                </div>
+                <div class="grille-scroll-container">
+                    <div class="semis-grille-wrapper">
+                        <div id="detail-semis-grid" class="semis-grid-display"></div>
+                        <div class="semis-reperes">
+                            <span class="repere-g">G</span>
+                            <span class="repere-d">D</span>
                         </div>
-                        <div class="semis-grille-wrapper">
-                            <div id="detail-semis-grid" class="semis-grid-display"></div>
-                            <div class="semis-reperes">
-                                <span class="repere-g">G</span>
-                                <span class="repere-d">D</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="button" id="btn-enregistrer-semis" class="btn-primary">Enregistrer</button>
-                        <button type="button" id="btn-modifier-semis" class="btn-secondary">Modifier</button>
                     </div>
                 </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" id="btn-enregistrer-semis" class="btn-primary">Enregistrer</button>
+                <button type="button" id="btn-modifier-semis" class="btn-secondary">Modifier</button>
+            </div>
+            </div>
             </div>
 
             <!-- Modification d'un bac de semis -->
@@ -570,13 +574,13 @@
                         <p><strong>Application :</strong> ENPLASE</p>
                         <p><strong>« Plante 🌱 · Arrose 💧 · Récolte 🧺 »</strong></p>
                         <p><strong>Créateur :</strong> Leroy Aurélien</p>
-                        <p><strong>Version :</strong> 1.03</p>
+                        <p><strong>Version :</strong> 1.05</p>
                         <p><strong>©</strong> Tous Droits Réservés 2026</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Onglet Ajouter Conseils -->
+<!-- Onglet Ajouter Conseils -->
 <div id="subtab-ajout-conseil" class="subtab">
 
     <!-- Vue liste des conseils -->
@@ -585,6 +589,34 @@
             <h1>Mes Conseils</h1>
             <button id="btn-add-conseil" class="btn-add" title="Ajouter un conseil">+</button>
         </div>
+
+        <!-- Filtres par tags -->
+        <div class="conseils-filtres">
+            <h3>Filtrer par catégorie</h3>
+            <div class="tags-filter-group">
+                <label class="tag-filter-chip" data-tag-key="potager-semis">
+                    <input type="checkbox" class="filtre-tag-cb" value="potager-semis">
+                    <span class="chip-label">🥕 Potager & Semis</span>
+                </label>
+                <label class="tag-filter-chip" data-tag-key="arbres-fleurs">
+                    <input type="checkbox" class="filtre-tag-cb" value="arbres-fleurs">
+                    <span class="chip-label">🌳 Arbres & Fleurs</span>
+                </label>
+                <label class="tag-filter-chip" data-tag-key="entretien-sol">
+                    <input type="checkbox" class="filtre-tag-cb" value="entretien-sol">
+                    <span class="chip-label">🧹 Entretien & Sol</span>
+                </label>
+                <label class="tag-filter-chip" data-tag-key="maladies-protection">
+                    <input type="checkbox" class="filtre-tag-cb" value="maladies-protection">
+                    <span class="chip-label">🛡️ Maladies & Protection</span>
+                </label>
+                <label class="tag-filter-chip" data-tag-key="calendrier-materiel">
+                    <input type="checkbox" class="filtre-tag-cb" value="calendrier-materiel">
+                    <span class="chip-label">📅 Calendrier & Matériel</span>
+                </label>
+            </div>
+        </div>
+
         <div id="conseils-list" class="conseil-list">
             <!-- Rempli dynamiquement -->
         </div>
@@ -598,6 +630,7 @@
         </div>
         <div id="conseil-detail-content" class="form-card">
             <h2 id="detail-conseil-titre"></h2>
+            <div id="detail-conseil-tags" class="conseil-tags"></div>
             <div id="detail-conseil-texte" class="detail-texte"></div>
             <div id="detail-conseil-lien" class="detail-lien"></div>
             <div id="detail-conseil-source" class="detail-source"></div>
@@ -615,6 +648,34 @@
                 <label for="conseil-titre">Titre <span class="required">*</span></label>
                 <input type="text" id="conseil-titre" required placeholder="Ex: Arrosage des tomates">
             </div>
+
+            <!-- Tags de catégorie -->
+            <div class="form-group">
+                <label>Catégories <span class="required">*</span></label>
+                <div class="tags-select-group">
+                    <label class="tag-select-chip" data-tag-key="potager-semis">
+                        <input type="checkbox" class="creation-tag-cb" value="potager-semis">
+                        <span class="chip-label">🥕 Potager & Semis</span>
+                    </label>
+                    <label class="tag-select-chip" data-tag-key="arbres-fleurs">
+                        <input type="checkbox" class="creation-tag-cb" value="arbres-fleurs">
+                        <span class="chip-label">🌳 Arbres & Fleurs</span>
+                    </label>
+                    <label class="tag-select-chip" data-tag-key="entretien-sol">
+                        <input type="checkbox" class="creation-tag-cb" value="entretien-sol">
+                        <span class="chip-label">🧹 Entretien & Sol</span>
+                    </label>
+                    <label class="tag-select-chip" data-tag-key="maladies-protection">
+                        <input type="checkbox" class="creation-tag-cb" value="maladies-protection">
+                        <span class="chip-label">🛡️ Maladies & Protection</span>
+                    </label>
+                    <label class="tag-select-chip" data-tag-key="calendrier-materiel">
+                        <input type="checkbox" class="creation-tag-cb" value="calendrier-materiel">
+                        <span class="chip-label">📅 Calendrier & Matériel</span>
+                    </label>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label for="conseil-texte">Conseil / Astuce <span class="required">*</span></label>
                 <textarea id="conseil-texte" rows="6" required placeholder="Rédigez votre conseil ici..."></textarea>
@@ -646,6 +707,34 @@
                 <label for="edit-conseil-titre">Titre <span class="required">*</span></label>
                 <input type="text" id="edit-conseil-titre" required placeholder="Ex: Arrosage des tomates">
             </div>
+
+            <!-- Tags de catégorie -->
+            <div class="form-group">
+                <label>Catégories <span class="required">*</span></label>
+                <div class="tags-select-group">
+                    <label class="tag-select-chip" data-tag-key="potager-semis">
+                        <input type="checkbox" class="edition-tag-cb" value="potager-semis">
+                        <span class="chip-label">🥕 Potager & Semis</span>
+                    </label>
+                    <label class="tag-select-chip" data-tag-key="arbres-fleurs">
+                        <input type="checkbox" class="edition-tag-cb" value="arbres-fleurs">
+                        <span class="chip-label">🌳 Arbres & Fleurs</span>
+                    </label>
+                    <label class="tag-select-chip" data-tag-key="entretien-sol">
+                        <input type="checkbox" class="edition-tag-cb" value="entretien-sol">
+                        <span class="chip-label">🧹 Entretien & Sol</span>
+                    </label>
+                    <label class="tag-select-chip" data-tag-key="maladies-protection">
+                        <input type="checkbox" class="edition-tag-cb" value="maladies-protection">
+                        <span class="chip-label">🛡️ Maladies & Protection</span>
+                    </label>
+                    <label class="tag-select-chip" data-tag-key="calendrier-materiel">
+                        <input type="checkbox" class="edition-tag-cb" value="calendrier-materiel">
+                        <span class="chip-label">📅 Calendrier & Matériel</span>
+                    </label>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label for="edit-conseil-texte">Conseil / Astuce <span class="required">*</span></label>
                 <textarea id="edit-conseil-texte" rows="6" required placeholder="Rédigez votre conseil ici..."></textarea>
@@ -703,5 +792,3 @@
     <script src="app.js"></script>
 </body>
 </html>
-
-
